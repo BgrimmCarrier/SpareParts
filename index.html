@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ค้นหาราคาอะไหล่แท้ - Carrier Thailand</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -23,12 +24,14 @@
             }
         }
     </script>
+    
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Role-based CSS hiding */
         body:not(.role-admin) .admin-only { display: none !important; }
         body:not(.role-dealer) .dealer-visible { display: none !important; }
         body.role-engineer .price-column { display: none !important; }
@@ -94,6 +97,7 @@
                     </div>
                 </div>
             </nav>
+            
             <div class="bg-slate-50 border-t border-slate-200/60 py-3 px-4 md:px-8">
                 <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-2.5">
                     <div class="flex-1 flex items-center px-3.5 bg-white rounded-xl border border-slate-300 shadow-sm">
@@ -114,10 +118,22 @@
                             <option value="CDU">CDU (คอยล์ร้อน)</option>
                         </select>
                     </div>
-                    <div class="admin-only w-full lg:w-36 flex items-center bg-orange-50/80 border border-orange-200 px-3.5 rounded-xl shadow-sm">
-                        <i data-lucide="percent" class="text-orange-500 w-5 h-5"></i>
-                        <input type="number" id="discountInput" placeholder="ส่วนลด %" min="0" max="100" value="0" class="w-full py-2.5 bg-transparent outline-none text-orange-700 font-bold text-center text-base">
+                    
+                    <!-- ช่องหักส่วนลด 2 ชั้น สำหรับ Admin เท่านั้น -->
+                    <div class="admin-only w-full lg:w-96 flex items-center bg-white border border-slate-300 px-2 rounded-xl shadow-sm gap-2">
+                        <!-- ช่อง 1: Standard Base Price (สีเทา) -->
+                        <div class="flex-1 flex items-center bg-slate-100 rounded-lg px-2 py-1 my-1 border border-slate-200" title="Standard Base Price">
+                            <i data-lucide="calculator" class="text-slate-500 w-4 h-4 shrink-0 mr-1"></i>
+                            <input type="number" id="discountInput" placeholder="Standard Base Price (%)" min="0" max="100" value="0" class="w-full py-1.5 bg-transparent outline-none text-slate-700 font-bold text-center text-xs">
+                        </div>
+                        
+                        <!-- ช่อง 2: %Discount (สีส้มแบบเดิม) -->
+                        <div class="flex-1 flex items-center bg-orange-50 rounded-lg px-2 py-1 my-1 border border-orange-200" title="%Discount">
+                            <i data-lucide="percent" class="text-orange-500 w-4 h-4 shrink-0 mr-1"></i>
+                            <input type="number" id="discountInput2" placeholder="%Discount" min="0" max="100" value="0" class="w-full py-1.5 bg-transparent outline-none text-orange-700 font-bold text-center text-xs">
+                        </div>
                     </div>
+                    
                     <div class="flex gap-2">
                         <button id="searchBtn" class="flex-grow lg:flex-none bg-carrier-lightblue hover:bg-carrier-blue text-white font-medium py-2 px-6 rounded-xl shadow-md flex items-center justify-center gap-2 text-base">
                             <i data-lucide="arrow-right-circle" class="w-5 h-5"></i> <span>ค้นหา</span>
@@ -173,9 +189,9 @@
                                 <th class="p-3.5">Series Name</th>
                                 <th class="p-3.5">Model</th>
                                 <th class="p-3.5 text-center w-24">Type</th>
-                                <th id="publicPriceHeader" class="price-column p-3.5 text-right font-bold w-40">PRICE_2026</th>
+                                <th id="publicPriceHeader" class="price-column p-3.5 text-right font-bold w-40">PRICE_2026<br><span class="text-sm font-normal">(ราคาก่อน Vat)</span></th>
                                 <th class="dealer-visible p-3.5 text-right bg-blue-100 text-blue-800 border-l border-blue-200 w-40">ราคาแนะนำขาย</th>
-                                <th class="admin-only p-3.5 text-right bg-emerald-100 text-emerald-800 border-l border-emerald-200 w-40">ราคาหลังหักส่วนลด</th>
+                                <th class="admin-only p-3.5 text-right bg-emerald-100 text-emerald-800 border-l border-emerald-200 w-40">ราคาหลังหักส่วนลด<br><span class="text-sm font-normal">(Cost)</span></th>
                             </tr>
                         </thead>
                         <tbody id="resultsTableBody" class="divide-y divide-slate-200 text-base"></tbody>
@@ -240,7 +256,7 @@
         initIcons();
 
         // 🌟 URL เซิร์ฟเวอร์ล่าสุดของคุณ 🌟
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDKofc73P-kl3eS3ZKDsLKRkiSXCNrpWPyoHXApYevQDNriAsFekil_Ym0ziYsgGfzSw/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymTLA8VazAvb6Xq5pGW33Sqa5yzSfwGR--3q4ezAbNdjeLdiSqHK55Cgfnzc9H1qVqJQ/exec'; 
         
         let allData = []; 
         let currentFilteredData = [];
@@ -261,8 +277,9 @@
         const clearDescBtn = document.getElementById('clearDescBtn'); 
         const typeFilter = document.getElementById('typeFilter');
         const discountInput = document.getElementById('discountInput');
+        const discountInput2 = document.getElementById('discountInput2'); 
 
-        // --- ระบบ Authentication แบบรับ Error ละเอียดจาก Server ---
+        // --- ระบบ Authentication ---
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
@@ -356,17 +373,29 @@
             const userRoleBadge = document.getElementById('userRoleBadge');
             const publicPriceHeader = document.getElementById('publicPriceHeader');
             
+            // 🌟 1. ตั้งค่าการแสดงผลตารางตามสิทธิ์ 🌟
             if(role === 'admin') {
                 document.body.classList.add('role-admin', 'role-dealer');
                 userRoleBadge.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 mr-1 text-amber-500"></i> <span class="text-amber-600">${roleName}</span>`;
-                if(publicPriceHeader) publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                if(publicPriceHeader) {
+                    // ให้ Admin เห็น PRICE_2026 ตามเดิม
+                    publicPriceHeader.classList.remove('hidden');
+                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                }
             } else if (role === 'dealer' || role === 'dealer01') {
                 document.body.classList.add('role-dealer');
                 userRoleBadge.innerHTML = `<i data-lucide="user" class="w-4 h-4 mr-1 text-carrier-lightblue"></i> <span class="text-slate-600">${roleName}</span>`;
-                if(publicPriceHeader) publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                if(publicPriceHeader) {
+                    publicPriceHeader.classList.remove('hidden');
+                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                }
             } else if (role === 'technician') {
+                document.body.classList.add('role-dealer'); // ให้ช่างเห็นคอลัมน์แนะนำขาย (สีฟ้า) ด้วย
                 userRoleBadge.innerHTML = `<i data-lucide="wrench" class="w-4 h-4 mr-1 text-emerald-500"></i> <span class="text-slate-600">${roleName}</span>`;
-                if(publicPriceHeader) publicPriceHeader.innerHTML = 'ราคา (บาท) <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                if(publicPriceHeader) {
+                    publicPriceHeader.classList.remove('hidden');
+                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                }
             } else if (role === 'engineer') {
                 document.body.classList.add('role-engineer');
                 userRoleBadge.innerHTML = `<i data-lucide="settings" class="w-4 h-4 mr-1 text-slate-500"></i> <span class="text-slate-600">${roleName}</span>`;
@@ -419,6 +448,7 @@
             clearDescBtn.classList.add('hidden');
             typeFilter.value = 'ALL';
             discountInput.value = '0';
+            if (discountInput2) discountInput2.value = '0';
             allData = []; 
             currentFilteredData = [];
 
@@ -507,7 +537,8 @@
         };
 
         // --- Render Table & Pagination ---
-        const formatPrice = (price) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(price);
+        const formatPrice = (price) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(price);
+        const formatPriceRoundUp = (price) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.ceil(price));
 
         const createTableRow = (item) => {
             const fallbackBOM = 'https://placehold.co/80x80/f8fafc/94a3b8?text=No+Drawing';
@@ -518,52 +549,80 @@
             const imgPhysical = item.imageUrlPhysical ? item.imageUrlPhysical : fallbackPhysical;
             const typeBadgeColor = item.fcu_cdu === 'FCU' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-orange-50 text-orange-700 border-orange-200';
 
-            const discountPercent = parseFloat(discountInput.value) || 0;
-            const cost = item.costPrice || 0;
-            const exactBasePrice = cost + (cost * 1.2); 
-            const retailPrice = Math.ceil(exactBasePrice);
-            const discountedPrice = Math.ceil(exactBasePrice * (1 - (discountPercent / 100)));
-
-            let finalPriceDisplay = '-';
-            if (currentUserRole === 'technician') {
-                if (cost > 0) finalPriceDisplay = formatPrice(Math.ceil(exactBasePrice * 0.9));
+            const discountPercent1 = parseFloat(document.getElementById('discountInput')?.value) || 0;
+            const discountPercent2 = parseFloat(document.getElementById('discountInput2')?.value) || 0;
+            
+            // 🌟 1. ดึงข้อมูลราคาที่จะโชว์ในช่องราคาหลัก (PRICE_2026) 🌟
+            let mainPriceDisplay = '-';
+            let costPrice = '-';
+            
+            if (currentUserRole === 'admin') {
+                // Admin: ดึงค่าตั้งต้นจาก Column I (item.price2026) มาหักส่วนลด 1 และปัดเศษขึ้น
+                if (item.price2026 > 0) {
+                    let step1 = item.price2026 * (1 - (discountPercent1 / 100));
+                    mainPriceDisplay = formatPriceRoundUp(step1); // ใช้ฟังก์ชันปัดเศษขึ้น
+                    
+                    // นำผลลัพธ์จากสเต็ปแรก มาหักส่วนลด 2 ต่อ และปัดเศษขึ้น
+                    let step2 = step1 * (1 - (discountPercent2 / 100));
+                    costPrice = formatPriceRoundUp(step2); // ใช้ฟังก์ชันปัดเศษขึ้น
+                }
+            } else if (currentUserRole === 'technician') {
+                mainPriceDisplay = item.technicianPrice > 0 ? formatPrice(item.technicianPrice) : '-'; // ดึง Col M
             } else if (currentUserRole === 'dealer01') {
-                if (cost > 0) finalPriceDisplay = formatPrice(Math.ceil(exactBasePrice * 0.8));
-            } else {
-                finalPriceDisplay = item.price ? formatPrice(Math.ceil(item.price)) : '-';
+                mainPriceDisplay = item.dealer01Price > 0 ? formatPrice(item.dealer01Price) : '-'; // ดึง Col L
+            } else if (currentUserRole === 'dealer') {
+                mainPriceDisplay = item.dealerPrice > 0 ? formatPrice(item.dealerPrice) : '-'; // ดึง Col K
             }
+
+            // 🌟 2. ดึงข้อมูลราคาแนะนำขาย (ช่องสีฟ้ากลาง) 🌟
+            // ทุกคนจะเห็นช่องนี้เป็นราคาจาก Column N 
+            const retailPriceDisplay = item.price > 0 ? formatPrice(item.price) : '-';
+            
+            // ทำความสะอาดข้อความเพื่อไม่ให้ Error พังเวลาแสดงผล
+            const safeDesc = (item.description || '-').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safePart = (item.partNo || '-').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+            // แสดง 3 คอลัมน์สำหรับ Admin และ 2 คอลัมน์สำหรับ Dealer/ช่าง
+            const adminCols = currentUserRole === 'admin' ? `
+                <td class="price-column p-3 align-middle font-extrabold text-carrier-blue text-right text-base md:text-lg border-l border-slate-150 bg-slate-50/30">${mainPriceDisplay}</td>
+                <td class="dealer-visible p-3 align-middle font-medium text-blue-700 text-right bg-blue-50/40 border-l border-blue-200 text-base">${retailPriceDisplay}</td>
+                <td class="admin-only p-3 align-middle font-extrabold text-emerald-700 text-right bg-emerald-50/70 border-l border-emerald-200 text-base md:text-lg">${costPrice}</td>
+            ` : `
+                <td class="price-column p-3 align-middle font-extrabold text-carrier-blue text-right text-base md:text-lg border-l border-slate-150 bg-slate-50/30">${mainPriceDisplay}</td>
+                <td class="dealer-visible p-3 align-middle font-medium text-blue-700 text-right bg-blue-50/40 border-l border-blue-200 text-base">${retailPriceDisplay}</td>
+                <td class="admin-only hidden"></td>
+            `;
 
             return `
                 <tr class="hover:bg-blue-50/40 transition-colors group bg-white border-b border-slate-200">
                     <td class="p-2 align-middle text-center">
                         <div class="w-16 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden p-0.5 shadow-sm mx-auto transition-transform group-hover:scale-105 ${item.imageUrlBOM ? 'cursor-pointer hover:border-carrier-lightblue' : ''}" 
-                             ${item.imageUrlBOM ? `onclick="openImageModal('${imgBOM}', 'Exploded View Drawing (No. ${item.no || '-'}): ${item.description}')"` : ''}>
+                             ${item.imageUrlBOM ? `onclick="openImageModal('${imgBOM}', 'Exploded View Drawing (No. ${item.no || '-'}): ${safeDesc}')"` : ''}>
                             <img src="${imgBOM}" alt="Exploded View Drawing" onerror="this.onerror=null; this.src='${fallbackBOM}';" class="w-full h-full object-contain ${!item.imageUrlBOM ? 'opacity-50' : ''}">
                         </div>
                     </td>
                     <td class="p-2 align-middle text-center">
                         <div class="w-16 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden p-0.5 shadow-sm mx-auto transition-transform group-hover:scale-105 ${item.imageUrlEPRAT ? 'cursor-pointer hover:border-carrier-lightblue' : ''}" 
-                             ${item.imageUrlEPRAT ? `onclick="openImageModal('${imgEPRAT}', 'E-PART (No. ${item.no || '-'}): ${item.description}')"` : ''}>
+                             ${item.imageUrlEPRAT ? `onclick="openImageModal('${imgEPRAT}', 'E-PART (No. ${item.no || '-'}): ${safeDesc}')"` : ''}>
                             <img src="${imgEPRAT}" alt="E-PART" onerror="this.onerror=null; this.src='${fallbackEPRAT}';" class="w-full h-full object-contain ${!item.imageUrlEPRAT ? 'opacity-50' : ''}">
                         </div>
                     </td>
                     <td class="p-2 align-middle text-center">
                         <div class="w-16 h-16 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden p-0.5 shadow-sm mx-auto transition-transform group-hover:scale-105 ${item.imageUrlPhysical ? 'cursor-pointer hover:border-carrier-lightblue' : ''}" 
-                             ${item.imageUrlPhysical ? `onclick="openImageModal('${imgPhysical}', 'Physical Image (Part No. ${item.partNo || '-'}): ${item.description}')"` : ''}>
+                             ${item.imageUrlPhysical ? `onclick="openImageModal('${imgPhysical}', 'Physical Image (Part No. ${safePart}): ${safeDesc}')"` : ''}>
                             <img src="${imgPhysical}" alt="Physical Image" onerror="this.onerror=null; this.src='${fallbackPhysical}';" class="w-full h-full object-contain ${!item.imageUrlPhysical ? 'opacity-50' : ''}">
                         </div>
                     </td>
                     <td class="p-2 align-middle text-center"><span class="text-slate-500 font-semibold text-sm">${item.no || '-'}</span></td>
                     <td class="p-2 align-middle font-bold text-carrier-lightblue text-base">
-                        ${item.partNo ? `<button onclick="showModelsForPart('${item.partNo}')" class="hover:underline hover:text-carrier-blue transition-colors text-left text-blue-600 focus:outline-none flex items-center gap-1 font-semibold" title="คลิกเพื่อดูรุ่นอะไหล่ร่วม">${item.partNo}</button>` : '-'}
+                        ${item.partNo ? `<button onclick="showModelsForPart('${safePart}')" class="hover:underline hover:text-carrier-blue transition-colors text-left text-blue-600 focus:outline-none flex items-center gap-1 font-semibold" title="คลิกเพื่อดูรุ่นอะไหล่ร่วม">${item.partNo}</button>` : '-'}
                     </td>
                     <td class="p-2 align-middle text-slate-800 font-normal leading-snug text-base">${item.description || '-'}</td>
                     <td class="p-2 align-middle text-slate-600 text-sm">${item.seriesName || '-'}</td>
                     <td class="p-2 align-middle text-slate-700 text-sm font-medium">${item.model || '-'}</td>
                     <td class="p-2 align-middle text-center"><span class="px-3 py-1.5 ${typeBadgeColor} text-xs rounded-full border font-bold">${item.fcu_cdu || '-'}</span></td>
-                    <td class="price-column p-3 align-middle font-extrabold text-carrier-blue text-right text-base md:text-lg border-l border-slate-150 bg-slate-50/30">${finalPriceDisplay}</td>
-                    <td class="dealer-visible p-3 align-middle font-medium text-blue-700 text-right bg-blue-50/40 border-l border-blue-200 text-base">${item.costPrice > 0 ? formatPrice(retailPrice) : '-'}</td>
-                    <td class="admin-only p-3 align-middle font-extrabold text-emerald-700 text-right bg-emerald-50/70 border-l border-emerald-200 text-base md:text-lg">${item.costPrice > 0 ? formatPrice(discountedPrice) : '-'}</td>
+                    
+                    ${adminCols}
                 </tr>
             `;
         };
@@ -673,23 +732,30 @@
         searchInput.addEventListener('input', (e) => { e.target.value.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden'); });
         searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
         clearBtn.addEventListener('click', () => { searchInput.value = ''; clearBtn.classList.add('hidden'); handleSearch(); });
+        
         descSearchInput.addEventListener('input', (e) => { e.target.value.length > 0 ? clearDescBtn.classList.remove('hidden') : clearDescBtn.classList.add('hidden'); });
         descSearchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
         clearDescBtn.addEventListener('click', () => { descSearchInput.value = ''; clearDescBtn.classList.add('hidden'); handleSearch(); });
+        
         document.getElementById('searchBtn').addEventListener('click', handleSearch);
         typeFilter.addEventListener('change', handleSearch);
         document.getElementById('refreshBtn').addEventListener('click', handleRefresh);
+        
         discountInput.addEventListener('input', () => { if (currentFilteredData.length > 0) renderTablePage(); });
+        if (discountInput2) discountInput2.addEventListener('input', () => { if (currentFilteredData.length > 0) renderTablePage(); });
+        
         document.getElementById('closeModalBtn').addEventListener('click', closeImageModal);
         document.getElementById('imageModal').addEventListener('click', (e) => { if (e.target === document.getElementById('imageModal')) closeImageModal(); });
         document.getElementById('closePartModalBtn').addEventListener('click', closePartModal);
         document.getElementById('partModal').addEventListener('click', (e) => { if (e.target === document.getElementById('partModal')) closePartModal(); });
+        
         document.addEventListener('keydown', (e) => { 
             if (e.key === 'Escape') {
                 if (!document.getElementById('imageModal').classList.contains('hidden')) closeImageModal();
                 if (!document.getElementById('partModal').classList.contains('hidden')) closePartModal();
             } 
         });
+        
         document.getElementById('logoutBtn').addEventListener('click', () => { location.reload(); });
     </script>
 </body>
