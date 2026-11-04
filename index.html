@@ -189,7 +189,7 @@
                                 <th class="p-3.5">Series Name</th>
                                 <th class="p-3.5">Model</th>
                                 <th class="p-3.5 text-center w-24">Type</th>
-                                <th id="publicPriceHeader" class="price-column p-3.5 text-right font-bold w-40">PRICE_2026<br><span class="text-sm font-normal">(ราคาก่อน Vat)</span></th>
+                                <th id="publicPriceHeader" class="price-column p-3.5 text-right font-bold w-40">PRICE_<br><span class="text-sm font-normal">(ราคาก่อน Vat)</span></th>
                                 <th class="dealer-visible p-3.5 text-right bg-blue-100 text-blue-800 border-l border-blue-200 w-40">ราคาแนะนำขาย</th>
                                 <th class="admin-only p-3.5 text-right bg-emerald-100 text-emerald-800 border-l border-emerald-200 w-40">ราคาหลังหักส่วนลด<br><span class="text-sm font-normal">(Cost)</span></th>
                             </tr>
@@ -767,28 +767,3 @@
     </script>
 </body>
 </html>
-if(role === 'admin') {
-    document.body.classList.add('role-admin', 'role-dealer');
-    userRoleBadge.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 mr-1 text-amber-500"></i> <span class="text-amber-600">${roleName}</span>`;
-    if(publicPriceHeader) {
-        publicPriceHeader.classList.remove('hidden');
-        // แก้ไขบรรทัดนี้:
-        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
-    }
-} else if (role === 'dealer' || role === 'dealer01') {
-    document.body.classList.add('role-dealer');
-    userRoleBadge.innerHTML = `<i data-lucide="user" class="w-4 h-4 mr-1 text-carrier-lightblue"></i> <span class="text-slate-600">${roleName}</span>`;
-    if(publicPriceHeader) {
-        publicPriceHeader.classList.remove('hidden');
-        // แก้ไขบรรทัดนี้:
-        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
-    }
-} else if (role === 'technician') {
-    document.body.classList.add('role-dealer');
-    userRoleBadge.innerHTML = `<i data-lucide="wrench" class="w-4 h-4 mr-1 text-emerald-500"></i> <span class="text-slate-600">${roleName}</span>`;
-    if(publicPriceHeader) {
-        publicPriceHeader.classList.remove('hidden');
-        // แก้ไขบรรทัดนี้:
-        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
-    }
-}
