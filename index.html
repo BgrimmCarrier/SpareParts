@@ -378,23 +378,22 @@
                 document.body.classList.add('role-admin', 'role-dealer');
                 userRoleBadge.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 mr-1 text-amber-500"></i> <span class="text-amber-600">${roleName}</span>`;
                 if(publicPriceHeader) {
-                    // ให้ Admin เห็น PRICE_2026 ตามเดิม
                     publicPriceHeader.classList.remove('hidden');
-                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                    publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
                 }
             } else if (role === 'dealer' || role === 'dealer01') {
                 document.body.classList.add('role-dealer');
                 userRoleBadge.innerHTML = `<i data-lucide="user" class="w-4 h-4 mr-1 text-carrier-lightblue"></i> <span class="text-slate-600">${roleName}</span>`;
                 if(publicPriceHeader) {
                     publicPriceHeader.classList.remove('hidden');
-                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                    publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
                 }
             } else if (role === 'technician') {
-                document.body.classList.add('role-dealer'); // ให้ช่างเห็นคอลัมน์แนะนำขาย (สีฟ้า) ด้วย
+                document.body.classList.add('role-dealer');
                 userRoleBadge.innerHTML = `<i data-lucide="wrench" class="w-4 h-4 mr-1 text-emerald-500"></i> <span class="text-slate-600">${roleName}</span>`;
                 if(publicPriceHeader) {
                     publicPriceHeader.classList.remove('hidden');
-                    publicPriceHeader.innerHTML = 'PRICE_2026 <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+                    publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
                 }
             } else if (role === 'engineer') {
                 document.body.classList.add('role-engineer');
@@ -528,7 +527,6 @@
                 finalFilteredData = descFilteredData.length > 0 ? descFilteredData : baseFilteredData;
             }
 
-            // เรียงลำดับข้อมูลตามชื่อ Model
             finalFilteredData.sort((a, b) => {
                 const modelA = (a.model || '').toString().trim();
                 const modelB = (b.model || '').toString().trim();
@@ -559,37 +557,32 @@
             const discountPercent1 = parseFloat(document.getElementById('discountInput')?.value) || 0;
             const discountPercent2 = parseFloat(document.getElementById('discountInput2')?.value) || 0;
             
-            // 🌟 1. ดึงข้อมูลราคาที่จะโชว์ในช่องราคาหลัก (PRICE_2026) 🌟
+            // 🌟 1. ดึงข้อมูลราคาที่จะโชว์ในช่องราคาหลัก (PRICE_) 🌟
             let mainPriceDisplay = '-';
             let costPrice = '-';
             
             if (currentUserRole === 'admin') {
-                // Admin: ดึงค่าตั้งต้นจาก Column I (item.price2026) มาหักส่วนลด 1 และปัดเศษขึ้น
                 if (item.price2026 > 0) {
                     let step1 = item.price2026 * (1 - (discountPercent1 / 100));
-                    mainPriceDisplay = formatPriceRoundUp(step1); // ใช้ฟังก์ชันปัดเศษขึ้น
+                    mainPriceDisplay = formatPriceRoundUp(step1);
                     
-                    // นำผลลัพธ์จากสเต็ปแรก มาหักส่วนลด 2 ต่อ และปัดเศษขึ้น
                     let step2 = step1 * (1 - (discountPercent2 / 100));
-                    costPrice = formatPriceRoundUp(step2); // ใช้ฟังก์ชันปัดเศษขึ้น
+                    costPrice = formatPriceRoundUp(step2);
                 }
             } else if (currentUserRole === 'technician') {
-                mainPriceDisplay = item.technicianPrice > 0 ? formatPrice(item.technicianPrice) : '-'; // ดึง Col M
+                mainPriceDisplay = item.technicianPrice > 0 ? formatPrice(item.technicianPrice) : '-';
             } else if (currentUserRole === 'dealer01') {
-                mainPriceDisplay = item.dealer01Price > 0 ? formatPrice(item.dealer01Price) : '-'; // ดึง Col L
+                mainPriceDisplay = item.dealer01Price > 0 ? formatPrice(item.dealer01Price) : '-';
             } else if (currentUserRole === 'dealer') {
-                mainPriceDisplay = item.dealerPrice > 0 ? formatPrice(item.dealerPrice) : '-'; // ดึง Col K
+                mainPriceDisplay = item.dealerPrice > 0 ? formatPrice(item.dealerPrice) : '-';
             }
 
             // 🌟 2. ดึงข้อมูลราคาแนะนำขาย (ช่องสีฟ้ากลาง) 🌟
-            // ทุกคนจะเห็นช่องนี้เป็นราคาจาก Column N 
             const retailPriceDisplay = item.price > 0 ? formatPrice(item.price) : '-';
             
-            // ทำความสะอาดข้อความเพื่อไม่ให้ Error พังเวลาแสดงผล
             const safeDesc = (item.description || '-').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             const safePart = (item.partNo || '-').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-            // แสดง 3 คอลัมน์สำหรับ Admin และ 2 คอลัมน์สำหรับ Dealer/ช่าง
             const adminCols = currentUserRole === 'admin' ? `
                 <td class="price-column p-3 align-middle font-extrabold text-carrier-blue text-right text-base md:text-lg border-l border-slate-150 bg-slate-50/30">${mainPriceDisplay}</td>
                 <td class="dealer-visible p-3 align-middle font-medium text-blue-700 text-right bg-blue-50/40 border-l border-blue-200 text-base">${retailPriceDisplay}</td>
