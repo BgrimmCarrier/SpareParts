@@ -767,3 +767,28 @@
     </script>
 </body>
 </html>
+if(role === 'admin') {
+    document.body.classList.add('role-admin', 'role-dealer');
+    userRoleBadge.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4 mr-1 text-amber-500"></i> <span class="text-amber-600">${roleName}</span>`;
+    if(publicPriceHeader) {
+        publicPriceHeader.classList.remove('hidden');
+        // แก้ไขบรรทัดนี้:
+        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+    }
+} else if (role === 'dealer' || role === 'dealer01') {
+    document.body.classList.add('role-dealer');
+    userRoleBadge.innerHTML = `<i data-lucide="user" class="w-4 h-4 mr-1 text-carrier-lightblue"></i> <span class="text-slate-600">${roleName}</span>`;
+    if(publicPriceHeader) {
+        publicPriceHeader.classList.remove('hidden');
+        // แก้ไขบรรทัดนี้:
+        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+    }
+} else if (role === 'technician') {
+    document.body.classList.add('role-dealer');
+    userRoleBadge.innerHTML = `<i data-lucide="wrench" class="w-4 h-4 mr-1 text-emerald-500"></i> <span class="text-slate-600">${roleName}</span>`;
+    if(publicPriceHeader) {
+        publicPriceHeader.classList.remove('hidden');
+        // แก้ไขบรรทัดนี้:
+        publicPriceHeader.innerHTML = 'PRICE_ <br><span class="text-sm font-normal">(ราคาก่อน Vat)</span>';
+    }
+}
